@@ -100,6 +100,34 @@ app.get("/api/destinations/top-spend", async (req, res) => {
   }
 });
 
+// GET /api/trips/:id/budget - budget vs actual spend for a trip (via trip_budget_summary view)
+app.get("/api/trips/:id/budget", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT budget_amount, actual_spend, remaining FROM trip_budget_summary WHERE trip_id = $1;`,
+      [req.params.id],
+    );
+    res.json(result.rows[0] || null);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch budget" });
+  }
+});
+
+// GET /api/trips/:id/travelers - travelers on a trip
+app.get("/api/trips/:id/travelers", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name FROM travelers WHERE trip_id = $1 ORDER BY name;`,
+      [req.params.id],
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch travelers" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

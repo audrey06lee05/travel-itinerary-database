@@ -26,6 +26,16 @@
       <h2 id="detailTitle"></h2>
       <p id="detailDates"></p>
 
+      <div id="budgetSection">
+        <h3>Budget</h3>
+        <p id="budgetInfo"></p>
+      </div>
+
+      <div id="travelersSection">
+        <h3>Travelers</h3>
+        <ul id="travelersList"></ul>
+      </div>
+
       <h3>Destinations</h3>
       <table id="destTable">
         <thead>
@@ -116,12 +126,41 @@
           `${trip.start_date} to ${trip.end_date} (${trip.status})`;
 
         try {
-          const [destRes, catRes] = await Promise.all([
+          const [destRes, catRes, budgetRes, travelersRes] = await Promise.all([
             fetch(`/api/trips/${trip.id}/destinations`),
             fetch(`/api/trips/${trip.id}/categories`),
+            fetch(`/api/trips/${trip.id}/budget`),
+            fetch(`/api/trips/${trip.id}/travelers`),
           ]);
           const destinations = await destRes.json();
           const categories = await catRes.json();
+          const budget = await budgetRes.json();
+          const travelers = await travelersRes.json();
+
+          const budgetInfoEl = document.getElementById("budgetInfo");
+          if (budget && budget.budget_amount !== null) {
+            const isOver = Number(budget.remaining) < 0;
+            const badgeClass = isOver ? "over" : "under";
+            const badgeLabel = isOver ? "Over Budget" : "Under Budget";
+            budgetInfoEl.innerHTML = `
+              Budget: ${formatMoney(budget.budget_amount)} &middot; Spent: ${formatMoney(budget.actual_spend)}
+              <span class="budget-badge ${badgeClass}">${badgeLabel} (${formatMoney(Math.abs(budget.remaining))})</span>
+            `;
+          } else {
+            budgetInfoEl.innerHTML = `<span class="budget-badge none">No Budget Set</span>`;
+          }
+
+          const travelersListEl = document.getElementById("travelersList");
+          travelersListEl.innerHTML = "";
+          if (travelers.length === 0) {
+            travelersListEl.innerHTML = "<li>No travelers logged for this trip.</li>";
+          } else {
+            travelers.forEach((t) => {
+              const li = document.createElement("li");
+              li.textContent = t.name;
+              travelersListEl.appendChild(li);
+            });
+          }
 
           const destBody = document.querySelector("#destTable tbody");
           destBody.innerHTML = "";
