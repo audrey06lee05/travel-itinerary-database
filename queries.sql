@@ -117,3 +117,20 @@ WHERE expenses.amount_usd = (
   WHERE d2.trip_id = trips.id
 )
 ORDER BY trips.name;
+
+-- Stretch: split each shared expense evenly among the travelers on it
+SELECT
+  e.id AS expense_id,
+  e.description,
+  e.amount_usd,
+  t.name AS traveler_name,
+  ROUND(e.amount_usd / cnt.traveler_count, 2) AS share_amount
+FROM expenses e
+JOIN expense_travelers et ON et.expense_id = e.id
+JOIN travelers t ON t.id = et.traveler_id
+JOIN (
+  SELECT expense_id, COUNT(*) AS traveler_count
+  FROM expense_travelers
+  GROUP BY expense_id
+) cnt ON cnt.expense_id = e.id
+ORDER BY e.id, t.name;

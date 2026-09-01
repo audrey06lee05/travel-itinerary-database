@@ -24,6 +24,17 @@ INSERT INTO destinations (trip_id, name, arrival_date, departure_date) VALUES
 ((SELECT id FROM trips WHERE name = 'Japan Spring Trip'), 'Kyoto', '2026-04-09', '2026-04-13'),
 ((SELECT id FROM trips WHERE name = 'Japan Spring Trip'), 'Osaka', '2026-04-13', '2026-04-16');
 
+-- 2b. Travelers (stretch goal: 2-3 per trip)
+INSERT INTO travelers (trip_id, name) VALUES
+((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Audrey'),
+((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Jamie'),
+((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Audrey'),
+((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Sam'),
+((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Priya'),
+((SELECT id FROM trips WHERE name = 'NYC Weekend Getaway'), 'Audrey'),
+((SELECT id FROM trips WHERE name = 'Japan Spring Trip'), 'Audrey'),
+((SELECT id FROM trips WHERE name = 'Japan Spring Trip'), 'Jamie');
+
 -- 3. Expenses (Grand Canyon Village gets none — the zero-expense edge case)
 
 -- San Francisco
@@ -134,3 +145,20 @@ INSERT INTO expenses (destination_id, category, description, expense_date, amoun
 ((SELECT id FROM destinations WHERE name = 'Osaka'), 'transport', 'Osaka subway pass', '2026-04-14', 900, 'JPY', 0.00626, ROUND(900 * 0.00626, 2)),
 ((SELECT id FROM destinations WHERE name = 'Osaka'), 'activities', 'Osaka Castle admission', '2026-04-15', 600, 'JPY', 0.00626, ROUND(600 * 0.00626, 2)),
 ((SELECT id FROM destinations WHERE name = 'Osaka'), 'misc', 'Snack souvenirs', '2026-04-15', 3200, 'JPY', 0.00626, ROUND(3200 * 0.00626, 2));
+
+-- Mark a couple of lodging expenses as shared among all travelers on the trip (stretch goal)
+INSERT INTO expense_travelers (expense_id, traveler_id)
+SELECT e.id, t.id
+FROM expenses e
+JOIN destinations d ON d.id = e.destination_id
+JOIN travelers t ON t.trip_id = d.trip_id
+WHERE d.name = 'San Francisco, CA'
+  AND e.description = 'Hotel Zephyr - 2 nights';
+
+INSERT INTO expense_travelers (expense_id, traveler_id)
+SELECT e.id, t.id
+FROM expenses e
+JOIN destinations d ON d.id = e.destination_id
+JOIN travelers t ON t.trip_id = d.trip_id
+WHERE d.name = 'Zurich'
+  AND e.description = 'Hotel near Bahnhofstrasse - 3 nights';

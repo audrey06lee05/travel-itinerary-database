@@ -30,3 +30,16 @@ CREATE TABLE expenses (
   exchange_rate NUMERIC(10,6) NOT NULL DEFAULT 1,
   amount_usd NUMERIC(10,2) NOT NULL CHECK (amount_usd > 0)
 );
+
+-- Stretch: travelers on a trip, and which travelers share which expenses
+CREATE TABLE travelers (
+  id SERIAL PRIMARY KEY,
+  trip_id INT NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE expense_travelers (
+  expense_id INT NOT NULL REFERENCES expenses(id) ON DELETE CASCADE,
+  traveler_id INT NOT NULL REFERENCES travelers(id) ON DELETE CASCADE,
+  PRIMARY KEY (expense_id, traveler_id)
+);
