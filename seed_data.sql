@@ -162,3 +162,9 @@ JOIN destinations d ON d.id = e.destination_id
 JOIN travelers t ON t.trip_id = d.trip_id
 WHERE d.name = 'Zurich'
   AND e.description = 'Hotel near Bahnhofstrasse - 3 nights';
+
+-- Budgets (stretch goal) — NYC Weekend Getaway intentionally has none, to test the optional case
+INSERT INTO budgets (trip_id, budget_amount) VALUES
+((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 3000.00),
+((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 2500.00),
+((SELECT id FROM trips WHERE name = 'Japan Spring Trip'), 2000.00);

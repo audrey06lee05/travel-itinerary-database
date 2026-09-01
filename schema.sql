@@ -43,3 +43,23 @@ CREATE TABLE expense_travelers (
   traveler_id INT NOT NULL REFERENCES travelers(id) ON DELETE CASCADE,
   PRIMARY KEY (expense_id, traveler_id)
 );
+
+-- Stretch: budgets (optional, one per trip) and a view comparing budget vs actual spend
+CREATE TABLE budgets (
+  id SERIAL PRIMARY KEY,
+  trip_id INT NOT NULL UNIQUE REFERENCES trips(id) ON DELETE CASCADE,
+  budget_amount NUMERIC(10,2) NOT NULL CHECK (budget_amount > 0)
+);
+
+CREATE VIEW trip_budget_summary AS
+SELECT
+  trips.id AS trip_id,
+  trips.name AS trip,
+  budgets.budget_amount,
+  COALESCE(SUM(expenses.amount_usd), 0) AS actual_spend,
+  budgets.budget_amount - COALESCE(SUM(expenses.amount_usd), 0) AS remaining
+FROM trips
+LEFT JOIN budgets ON budgets.trip_id = trips.id
+LEFT JOIN destinations ON destinations.trip_id = trips.id
+LEFT JOIN expenses ON expenses.destination_id = destinations.id
+GROUP BY trips.id, trips.name, budgets.budget_amount;

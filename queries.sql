@@ -134,3 +134,21 @@ JOIN (
   GROUP BY expense_id
 ) cnt ON cnt.expense_id = e.id
 ORDER BY e.id, t.name;
+
+-- Stretch: the trip with the best "value" — lowest avg daily spend relative to destinations visited
+SELECT
+  trips.name AS trip,
+  COALESCE(SUM(expenses.amount_usd), 0) AS total_spend,
+  (trips.end_date - trips.start_date) AS trip_days,
+  COUNT(DISTINCT destinations.id) AS destination_count,
+  ROUND(COALESCE(SUM(expenses.amount_usd), 0) / (trips.end_date - trips.start_date), 2) AS avg_daily_spend,
+  ROUND(
+    (COALESCE(SUM(expenses.amount_usd), 0) / (trips.end_date - trips.start_date))
+    / COUNT(DISTINCT destinations.id), 2
+  ) AS value_score
+FROM trips
+JOIN destinations ON destinations.trip_id = trips.id
+LEFT JOIN expenses ON expenses.destination_id = destinations.id
+GROUP BY trips.id, trips.name, trips.start_date, trips.end_date
+ORDER BY value_score ASC
+LIMIT 1;
