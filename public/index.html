@@ -122,8 +122,8 @@
         topSpendSection.hidden = true;
         detailEl.hidden = false;
         document.getElementById("detailTitle").textContent = trip.name;
-        document.getElementById("detailDates").textContent =
-          `${trip.start_date} to ${trip.end_date} (${trip.status})`;
+        document.getElementById("detailDates").innerHTML =
+          `${trip.start_date} to ${trip.end_date} <span class="status ${trip.status}">${trip.status}</span>`;
 
         try {
           const [destRes, catRes, budgetRes, travelersRes] = await Promise.all([
