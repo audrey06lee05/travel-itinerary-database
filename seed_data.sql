@@ -4,7 +4,7 @@
 
 -- 1. Trips
 INSERT INTO trips (name, start_date, end_date) VALUES
-('US West Coast Road Trip', '2026-03-10', '2026-03-20'),
+('US West Coast Road Trip', '2026-03-10', '2026-03-22'),
 ('Switzerland Winter Trip', '2026-12-15', '2026-12-24'),
 ('NYC Weekend Getaway', '2026-08-29', '2026-09-05'),
 ('Japan Spring Trip', '2026-04-05', '2026-04-16');
@@ -15,6 +15,7 @@ INSERT INTO destinations (trip_id, name, arrival_date, departure_date) VALUES
 ((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Los Angeles, CA', '2026-03-12', '2026-03-15'),
 ((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Las Vegas, NV', '2026-03-15', '2026-03-18'),
 ((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Grand Canyon Village, AZ', '2026-03-18', '2026-03-20'),
+((SELECT id FROM trips WHERE name = 'US West Coast Road Trip'), 'Las Vegas, NV', '2026-03-20', '2026-03-22'),
 ((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Zurich', '2026-12-15', '2026-12-18'),
 ((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Lucerne', '2026-12-18', '2026-12-21'),
 ((SELECT id FROM trips WHERE name = 'Switzerland Winter Trip'), 'Interlaken', '2026-12-21', '2026-12-24'),
@@ -45,12 +46,19 @@ INSERT INTO expenses (destination_id, category, description, expense_date, amoun
 
 -- Las Vegas
 INSERT INTO expenses (destination_id, category, description, expense_date, amount, currency, exchange_rate, amount_usd) VALUES
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'lodging', 'The LINQ Hotel - 3 nights', '2026-03-15', 360.00, 'USD', 1, 360.00),
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'transport', 'Gas fill-up', '2026-03-15', 48.00, 'USD', 1, 48.00),
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'food', 'Buffet at Bellagio', '2026-03-16', 55.00, 'USD', 1, 55.00),
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'activities', 'Cirque du Soleil tickets', '2026-03-16', 150.00, 'USD', 1, 150.00),
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'food', 'In-N-Out on the Strip', '2026-03-17', 18.00, 'USD', 1, 18.00),
-((SELECT id FROM destinations WHERE name = 'Las Vegas, NV'), 'misc', 'Casino chips (entertainment)', '2026-03-17', 60.00, 'USD', 1, 60.00);
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'lodging', 'The LINQ Hotel - 3 nights', '2026-03-15', 360.00, 'USD', 1, 360.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'transport', 'Gas fill-up', '2026-03-15', 48.00, 'USD', 1, 48.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'food', 'Buffet at Bellagio', '2026-03-16', 55.00, 'USD', 1, 55.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'activities', 'Cirque du Soleil tickets', '2026-03-16', 150.00, 'USD', 1, 150.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'food', 'In-N-Out on the Strip', '2026-03-17', 18.00, 'USD', 1, 18.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-15'), 'misc', 'Casino chips (entertainment)', '2026-03-17', 60.00, 'USD', 1, 60.00);
+
+-- Las Vegas (revisit, on the way back before flying home)
+INSERT INTO expenses (destination_id, category, description, expense_date, amount, currency, exchange_rate, amount_usd) VALUES
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-20'), 'lodging', 'Excalibur Hotel - 2 nights', '2026-03-20', 220.00, 'USD', 1, 220.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-20'), 'food', 'Farewell dinner buffet', '2026-03-20', 42.00, 'USD', 1, 42.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-20'), 'transport', 'Rental car drop-off fee', '2026-03-21', 35.00, 'USD', 1, 35.00),
+((SELECT id FROM destinations WHERE name = 'Las Vegas, NV' AND arrival_date = '2026-03-20'), 'misc', 'Last-minute souvenirs', '2026-03-21', 25.00, 'USD', 1, 25.00);
 
 -- Zurich (CHF)
 INSERT INTO expenses (destination_id, category, description, expense_date, amount, currency, exchange_rate, amount_usd) VALUES
