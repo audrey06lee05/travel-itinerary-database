@@ -1,0 +1,158 @@
+<!--
+  Travel Itinerary Dashboard — vanilla JS frontend
+  Trip list view + trip detail view (destinations + category spend breakdown)
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Travel Itinerary Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Travel Itinerary Dashboard</h1>
+    <p id="loading">Loading trips...</p>
+    <p id="error" hidden></p>
+
+    <div id="topSpendSection" hidden>
+      <button id="topSpendBtn">Show Highest-Spending Destination</button>
+      <p id="topSpendResult"></p>
+    </div>
+
+    <ul class="trip-list" id="tripList" hidden></ul>
+
+    <div id="detail" hidden>
+      <button id="back">&larr; Back to trips</button>
+      <h2 id="detailTitle"></h2>
+      <p id="detailDates"></p>
+
+      <h3>Destinations</h3>
+      <table id="destTable">
+        <thead>
+          <tr>
+            <th>Destination</th>
+            <th>Arrival</th>
+            <th>Departure</th>
+            <th>Total Spend</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Spend by Category</h3>
+      <table id="catTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Total Spend</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script>
+      const tripListEl = document.getElementById("tripList");
+      const loadingEl = document.getElementById("loading");
+      const errorEl = document.getElementById("error");
+      const detailEl = document.getElementById("detail");
+      const backEl = document.getElementById("back");
+      const topSpendSection = document.getElementById("topSpendSection");
+      const topSpendBtn = document.getElementById("topSpendBtn");
+      const topSpendResult = document.getElementById("topSpendResult");
+
+      function showError(msg) {
+        loadingEl.hidden = true;
+        errorEl.hidden = false;
+        errorEl.textContent = msg;
+      }
+
+      function formatMoney(n) {
+        return "$" + Number(n).toFixed(2);
+      }
+
+      async function loadTrips() {
+        try {
+          const res = await fetch("/api/trips");
+          if (!res.ok) throw new Error("Failed to load trips");
+          const trips = await res.json();
+
+          loadingEl.hidden = true;
+          tripListEl.hidden = false;
+          topSpendSection.hidden = false;
+          tripListEl.innerHTML = "";
+
+          trips.forEach((trip) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+            <span>${trip.name} <span class="status ${trip.status}">${trip.status}</span></span>
+            <span class="total">${formatMoney(trip.total_spend)}</span>
+            <button class="view-btn">View Details</button>
+          `;
+            li.querySelector(".view-btn").addEventListener("click", () => showTripDetail(trip));
+            tripListEl.appendChild(li);
+          });
+        } catch (err) {
+          showError("Could not load trips. Is the server running?");
+        }
+      }
+
+      topSpendBtn.addEventListener("click", async () => {
+        try {
+          const res = await fetch("/api/destinations/top-spend");
+          const d = await res.json();
+          topSpendResult.textContent = `${d.name} (${d.trip_name}) — ${formatMoney(d.total_spend)}`;
+        } catch (err) {
+          topSpendResult.textContent = "Could not load this.";
+        }
+      });
+
+      async function showTripDetail(trip) {
+        tripListEl.hidden = true;
+        topSpendSection.hidden = true;
+        detailEl.hidden = false;
+        document.getElementById("detailTitle").textContent = trip.name;
+        document.getElementById("detailDates").textContent =
+          `${trip.start_date} to ${trip.end_date} (${trip.status})`;
+
+        try {
+          const [destRes, catRes] = await Promise.all([
+            fetch(`/api/trips/${trip.id}/destinations`),
+            fetch(`/api/trips/${trip.id}/categories`),
+          ]);
+          const destinations = await destRes.json();
+          const categories = await catRes.json();
+
+          const destBody = document.querySelector("#destTable tbody");
+          destBody.innerHTML = "";
+          destinations.forEach((d) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${d.name}</td><td>${d.arrival_date}</td><td>${d.departure_date}</td><td>${formatMoney(d.total_spend)}</td>`;
+            destBody.appendChild(tr);
+          });
+
+          const catBody = document.querySelector("#catTable tbody");
+          catBody.innerHTML = "";
+          categories.forEach((c) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${c.category}</td><td>${formatMoney(c.total_spend)}</td>`;
+            catBody.appendChild(tr);
+          });
+        } catch (err) {
+          const p = document.createElement("p");
+          p.className = "detail-error";
+          p.textContent = "Could not load trip details.";
+          detailEl.appendChild(p);
+        }
+      }
+
+      backEl.addEventListener("click", () => {
+        detailEl.hidden = true;
+        tripListEl.hidden = false;
+        topSpendSection.hidden = false;
+      });
+
+      loadTrips();
+    </script>
+  </body>
+</html>

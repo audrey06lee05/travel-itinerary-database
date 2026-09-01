@@ -1,0 +1,84 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+  color: #222;
+}
+h1 {
+  margin-bottom: 4px;
+}
+.trip-list {
+  list-style: none;
+  padding: 0;
+}
+.trip-list li {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.trip-list li:hover {
+  background: #f5f5f5;
+}
+.status {
+  font-size: 0.85em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: white;
+}
+.status.planned {
+  background: #888;
+}
+.status.in-progress {
+  background: #2a9d4a;
+}
+.status.completed {
+  background: #555;
+}
+.total {
+  font-weight: bold;
+}
+#detail {
+  margin-top: 30px;
+  border-top: 2px solid #ddd;
+  padding-top: 20px;
+}
+#detail table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+#detail th,
+#detail td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+#back {
+  cursor: pointer;
+  color: #2563eb;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+#loading,
+#error {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+#error,
+.detail-error {
+  color: #b91c1c;
+}
+[hidden] {
+  display: none;
+}
+
+button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid #ccc; background: #f0f0f0; cursor: pointer; }
+button:hover { background: #e0e0e0; }
+#topSpendSection { margin: 16px 0; padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
