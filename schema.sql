@@ -1,3 +1,7 @@
+-- Database schema: trips, destinations, expenses (one-to-many, cascading deletes)
+-- Trip status is derived from dates at query time, not stored as a column
+-- 3NF: no repeating groups, PK/FK/CHECK constraints enforce data integrity
+
 CREATE TABLE trips (
   id SERIAL PRIMARY KEY,
   name VARCHAR(150) NOT NULL,

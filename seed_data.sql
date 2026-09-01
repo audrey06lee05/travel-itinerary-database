@@ -1,3 +1,7 @@
+-- Sample data: 4 trips, 11 destinations, 72 expenses
+-- Currencies: USD, CHF, and JPY, converted to amount_usd via fixed exchange rates
+-- Edge cases included: single-destination trip (NYC), zero-expense destination (Grand Canyon Village)
+
 -- 1. Trips
 INSERT INTO trips (name, start_date, end_date) VALUES
 ('US West Coast Road Trip', '2026-03-10', '2026-03-20'),
