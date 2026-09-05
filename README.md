@@ -14,6 +14,8 @@ Built as a bootcamp project focused on schema design, SQL querying, and wiring q
 * **Expenses** — tied to a single destination, with category, amount, currency, and exchange rate. Stored in the original currency and converted to `amount_usd` via a fixed historical exchange rate, so cross-currency totals compare directly without converting at query time.
 * **Travelers** *(stretch)* — scoped to a single trip, not tracked globally. `expense_travelers` is a many-to-many join table recording who shared an expense; the split itself isn't stored, it's computed at query time (`amount_usd / number of travelers on it`).
 * **Budgets** *(stretch)* — optional, at most one per trip. The `trip_budget_summary` view left-joins budgets to trips so a trip without one still shows up, with a null budget/remaining.
+<img width="994" height="767" alt="Screenshot 2026-09-01 at 11 24 52 pm" src="https://github.com/user-attachments/assets/83083055-71c4-44d9-8472-cfe18aff1e0c" />
+
 
 ## 🏗️ API Endpoints
 All GET-only, no auth, raw SQL:
